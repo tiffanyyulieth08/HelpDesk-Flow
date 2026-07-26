@@ -15,12 +15,8 @@ public class Incidencia {
     private final EstadoIncidencia estado;
 
     private Incidencia(String titulo, String descripcion, String categoria, Impacto impacto, Urgencia urgencia) {
-        if (titulo == null || titulo.isBlank()) {
-            throw new ReglaNegocioException("El titulo no puede ser nulo, vacio o solo espacios");
-        }
-        if (descripcion == null || descripcion.length() < 10) {
-            throw new ReglaNegocioException("La descripcion debe tener al menos 10 caracteres");
-        }
+        validarTitulo(titulo);
+        validarDescripcion(descripcion);
         this.id = UUID.randomUUID();
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -28,6 +24,18 @@ public class Incidencia {
         this.impacto = impacto;
         this.urgencia = urgencia;
         this.estado = EstadoIncidencia.REGISTRADA;
+    }
+
+    private static void validarTitulo(String titulo) {
+        if (titulo == null || titulo.isBlank()) {
+            throw new ReglaNegocioException("El titulo no puede ser nulo, vacio o solo espacios");
+        }
+    }
+
+    private static void validarDescripcion(String descripcion) {
+        if (descripcion == null || descripcion.length() < 10) {
+            throw new ReglaNegocioException("La descripcion debe tener al menos 10 caracteres");
+        }
     }
 
     public static Incidencia crear(String titulo, String descripcion, String categoria, Impacto impacto, Urgencia urgencia) {
