@@ -6,14 +6,22 @@ public final class CalculadoraPrioridad {
     }
 
     public static Prioridad calcular(Impacto impacto, Urgencia urgencia) {
-        if (impacto == Impacto.ALTO && urgencia == Urgencia.ALTA) {
+        if (esCritica(impacto, urgencia)) {
             return Prioridad.CRITICA;
         }
 
-        if (impacto == Impacto.ALTO || urgencia == Urgencia.ALTA) {
+        if (requierePrioridadAlta(impacto, urgencia)) {
             return Prioridad.ALTA;
         }
 
         return Prioridad.NORMAL;
+    }
+
+    private static boolean esCritica(Impacto impacto, Urgencia urgencia) {
+        return impacto == Impacto.ALTO && urgencia == Urgencia.ALTA;
+    }
+
+    private static boolean requierePrioridadAlta(Impacto impacto, Urgencia urgencia) {
+        return impacto == Impacto.ALTO || urgencia == Urgencia.ALTA;
     }
 }
