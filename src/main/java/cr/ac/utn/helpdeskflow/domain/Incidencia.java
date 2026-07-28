@@ -1,5 +1,6 @@
 package cr.ac.utn.helpdeskflow.domain;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import cr.ac.utn.helpdeskflow.exception.ReglaNegocioException;
@@ -12,7 +13,9 @@ public class Incidencia {
     private final String categoria;
     private final Impacto impacto;
     private final Urgencia urgencia;
-    private final EstadoIncidencia estado;
+    private EstadoIncidencia estado;
+    private String solucionAplicada;
+    private LocalDateTime fechaCierre;
 
     private Incidencia(String titulo, String descripcion, String categoria, Impacto impacto, Urgencia urgencia) {
         validarTitulo(titulo);
@@ -68,5 +71,31 @@ public class Incidencia {
 
     public EstadoIncidencia getEstado() {
         return estado;
+    }
+
+    public void cambiarEstado(EstadoIncidencia nuevoEstado) {
+        if (nuevoEstado == null || nuevoEstado.ordinal() != estado.ordinal() + 1) {
+            throw new ReglaNegocioException("Solo se permite avanzar al estado siguiente");
+        }
+        if (nuevoEstado == EstadoIncidencia.FINALIZADA
+                && (solucionAplicada == null || solucionAplicada.isBlank())) {
+            throw new ReglaNegocioException("No se puede finalizar sin una solucion registrada");
+        }
+        estado = nuevoEstado;
+        if (estado == EstadoIncidencia.FINALIZADA) {
+            fechaCierre = LocalDateTime.now();
+        }
+    }
+
+    public void registrarSolucion(String solucion) {
+        solucionAplicada = solucion;
+    }
+
+    public String getSolucionAplicada() {
+        return solucionAplicada;
+    }
+
+    public LocalDateTime getFechaCierre() {
+        return fechaCierre;
     }
 }
