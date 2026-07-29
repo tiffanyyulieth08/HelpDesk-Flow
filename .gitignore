@@ -5,3 +5,8 @@ data/
 *.iml
 *.log
 .DS_Store
+
+# Archivos generados por H2
+*.mv.db
+*.trace.db
+*.lock.db
