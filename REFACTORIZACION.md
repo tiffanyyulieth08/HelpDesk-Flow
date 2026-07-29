@@ -41,3 +41,75 @@ calcula mediante impacto y urgencia, aunque la entidad ya ofrece
 - Fallos: 0
 - Errores: 0
 - Resultado: `BUILD SUCCESS`
+
+## Cambio realizado
+
+### Ciclo 1 — Extracción de la validación de transiciones
+
+Se creó `ValidadorTransicion`, responsable de:
+
+- validar que una transición sea secuencial;
+- validar que exista solución antes de finalizar.
+
+`Incidencia` conserva:
+
+- la modificación del estado;
+- la fecha de cierre;
+- sus datos internos.
+
+### Ciclo 2 — Encapsulación del acceso a prioridad
+
+`IncidenciaConsultaService` dejó de conocer que la prioridad depende de impacto
+y urgencia.
+
+Ahora utiliza:
+
+`incidencia.getPrioridad()`
+
+La fórmula continúa centralizada en `CalculadoraPrioridad`.
+
+## Comparación
+
+### Antes
+
+- `Incidencia.cambiarEstado()` validaba y mutaba.
+- `IncidenciaConsultaService` conocía cómo calcular prioridad.
+
+### Después
+
+- `ValidadorTransicion` valida.
+- `Incidencia` cambia el estado.
+- `CalculadoraPrioridad` calcula.
+- `Incidencia` expone su prioridad.
+- `IncidenciaConsultaService` consulta la prioridad de la entidad.
+
+## Pruebas protectoras
+
+- `IncidenciaTransicionTest`
+- `IncidenciaTest`
+- `ExpediteWorkflowTest`
+- `IncidenciaConsultaServiceTest`
+- `ConsultaIncidenciasFuncionalTest`
+- `CalculadoraPrioridadTest`
+
+## Resultado obtenido
+
+- Pruebas ejecutadas: 64
+- Fallos: 0
+- Errores: 0
+- Resultado: `BUILD SUCCESS`
+- Comportamiento observable: sin cambios
+
+## Participación Ping-Pong
+
+### Ciclo 1
+
+- Driver: Tiffany
+- Navigator: Seidy
+- Cambio: extracción de `ValidadorTransicion`.
+
+### Ciclo 2
+
+- Driver: Seidy
+- Navigator: Tiffany
+- Cambio: delegación de la prioridad en la entidad.
