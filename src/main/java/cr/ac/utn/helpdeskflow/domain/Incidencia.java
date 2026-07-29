@@ -21,8 +21,7 @@ public class Incidencia {
     private LocalDateTime fechaCierre;
 
     private Incidencia(String titulo, String descripcion, String categoria, Impacto impacto, Urgencia urgencia) {
-        validarTitulo(titulo);
-        validarDescripcion(descripcion);
+        validarDatosObligatorios(titulo, descripcion, categoria, impacto, urgencia);
         this.id = UUID.randomUUID();
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -39,8 +38,10 @@ public class Incidencia {
                        String solucionAplicada, LocalDateTime fechaCreacion,
                        LocalDateTime fechaCierre,
                        ClaseServicio claseServicio) {
-        validarTitulo(titulo);
-        validarDescripcion(descripcion);
+        validarDatosObligatorios(titulo, descripcion, categoria, impacto, urgencia);
+        if (id == null || estado == null || fechaCreacion == null || claseServicio == null) {
+            throw new ReglaNegocioException("Los datos de persistencia obligatorios no pueden ser nulos");
+        }
         this.id = id;
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -66,6 +67,22 @@ public class Incidencia {
         }
     }
 
+    private static void validarDatosObligatorios(String titulo, String descripcion,
+                                                  String categoria, Impacto impacto,
+                                                  Urgencia urgencia) {
+        validarTitulo(titulo);
+        validarDescripcion(descripcion);
+        if (categoria == null || categoria.isBlank()) {
+            throw new ReglaNegocioException("La categoria es obligatoria");
+        }
+        if (impacto == null) {
+            throw new ReglaNegocioException("El impacto es obligatorio");
+        }
+        if (urgencia == null) {
+            throw new ReglaNegocioException("La urgencia es obligatoria");
+        }
+    }
+
     public static Incidencia crear(String titulo, String descripcion, String categoria, Impacto impacto, Urgencia urgencia) {
         return new Incidencia(titulo, descripcion, categoria, impacto, urgencia);
     }
@@ -74,7 +91,8 @@ public class Incidencia {
                                         Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
                                         String solucionAplicada, LocalDateTime fechaCierre) {
         return new Incidencia(id, titulo, descripcion, categoria, impacto, urgencia,
-                              estado, solucionAplicada, null, fechaCierre, ClaseServicio.NORMAL);
+                              estado, solucionAplicada, LocalDateTime.now().truncatedTo(ChronoUnit.MICROS),
+                              fechaCierre, ClaseServicio.NORMAL);
     }
 
     public static Incidencia rehidratar(UUID id, String titulo, String descripcion, String categoria,
@@ -82,7 +100,8 @@ public class Incidencia {
                                         String solucionAplicada, LocalDateTime fechaCierre,
                                         ClaseServicio claseServicio) {
         return new Incidencia(id, titulo, descripcion, categoria, impacto, urgencia,
-                              estado, solucionAplicada, null, fechaCierre, claseServicio);
+                              estado, solucionAplicada, LocalDateTime.now().truncatedTo(ChronoUnit.MICROS),
+                              fechaCierre, claseServicio);
     }
 
     public static Incidencia rehidratar(UUID id, String titulo, String descripcion, String categoria,

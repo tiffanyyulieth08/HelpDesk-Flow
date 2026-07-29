@@ -18,11 +18,14 @@ public class IncidenciaWorkflowService {
     }
 
     public void cambiarEstado(UUID id, EstadoIncidencia nuevoEstado) {
-        Incidencia incidencia = repository.buscarPorId(id)
-                .orElseThrow(() -> new ReglaNegocioException("No existe una incidencia con el identificador indicado"));
+        repository.ejecutarAtomico(() -> {
+            Incidencia incidencia = repository.buscarPorId(id)
+                    .orElseThrow(() -> new ReglaNegocioException(
+                            "No existe una incidencia con el identificador indicado"));
 
-        expeditePolicy.validarTransicion(incidencia, nuevoEstado);
-        incidencia.cambiarEstado(nuevoEstado);
-        repository.guardar(incidencia);
+            expeditePolicy.validarTransicion(incidencia, nuevoEstado);
+            incidencia.cambiarEstado(nuevoEstado);
+            repository.guardar(incidencia);
+        });
     }
 }

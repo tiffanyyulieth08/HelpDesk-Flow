@@ -50,6 +50,7 @@ class H2IncidenciaRepositoryTest {
         assertEquals(incidencia.getId(), resultado.orElseThrow().getId());
         assertEquals(incidencia.getTitulo(), resultado.orElseThrow().getTitulo());
         assertEquals(incidencia.getDescripcion(), resultado.orElseThrow().getDescripcion());
+        assertEquals(incidencia.getFechaCreacion(), resultado.orElseThrow().getFechaCreacion());
         assertNull(resultado.orElseThrow().getFechaCierre());
     }
 
@@ -134,6 +135,7 @@ class H2IncidenciaRepositoryTest {
         assertEquals(incidencia.getDescripcion(), recuperada.getDescripcion());
         assertEquals(incidencia.getCategoria(), recuperada.getCategoria());
         assertEquals(incidencia.getEstado(), recuperada.getEstado());
+        assertEquals(incidencia.getFechaCreacion(), recuperada.getFechaCreacion());
         assertFalse(repositorioRecreado.buscarTodas().isEmpty());
     }
 

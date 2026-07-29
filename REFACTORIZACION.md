@@ -94,7 +94,8 @@ La fórmula continúa centralizada en `CalculadoraPrioridad`.
 
 ## Resultado obtenido
 
-- Pruebas ejecutadas: 64
+- Línea base de la refactorización: 64 pruebas.
+- Verificación de entrega final: 69 pruebas.
 - Fallos: 0
 - Errores: 0
 - Resultado: `BUILD SUCCESS`

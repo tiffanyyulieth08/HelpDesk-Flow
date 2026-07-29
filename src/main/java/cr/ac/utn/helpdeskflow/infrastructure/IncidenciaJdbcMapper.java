@@ -14,7 +14,8 @@ import cr.ac.utn.helpdeskflow.domain.Urgencia;
 
 class IncidenciaJdbcMapper {
 
-    static final String SELECT_COLUMNAS = "id, titulo, descripcion, categoria, impacto, urgencia, estado, clase_servicio, fecha_cierre, solucion_aplicada";
+    static final String SELECT_COLUMNAS = "id, titulo, descripcion, categoria, impacto, urgencia, "
+            + "estado, clase_servicio, fecha_creacion, fecha_cierre, solucion_aplicada";
 
     Incidencia mapear(ResultSet rs) throws SQLException {
         UUID id = UUID.fromString(rs.getString("id"));
@@ -25,10 +26,11 @@ class IncidenciaJdbcMapper {
         Urgencia urgencia = Urgencia.valueOf(rs.getString("urgencia"));
         EstadoIncidencia estado = EstadoIncidencia.valueOf(rs.getString("estado"));
         ClaseServicio claseServicio = ClaseServicio.valueOf(rs.getString("clase_servicio"));
+        LocalDateTime fechaCreacion = rs.getTimestamp("fecha_creacion").toLocalDateTime();
         LocalDateTime fechaCierre = obtenerNullableTimestamp(rs, "fecha_cierre");
         String solucionAplicada = rs.getString("solucion_aplicada");
         return Incidencia.rehidratar(id, titulo, descripcion, categoria, impacto, urgencia,
-                estado, solucionAplicada, fechaCierre, claseServicio);
+                estado, solucionAplicada, fechaCreacion, fechaCierre, claseServicio);
     }
 
     static LocalDateTime obtenerNullableTimestamp(ResultSet rs, String column) throws SQLException {

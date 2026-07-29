@@ -55,4 +55,34 @@ class IncidenciaTest {
         Incidencia incidencia = Incidencia.crear("Titulo valido", "Descripcion valida con mas de diez caracteres", "Redes", Impacto.MEDIO, Urgencia.MEDIA);
         assertEquals(EstadoIncidencia.REGISTRADA, incidencia.getEstado());
     }
+
+    @Test
+    void rechazaCategoriaNulaOVacia() {
+        assertThrows(ReglaNegocioException.class,
+                () -> Incidencia.crear("Titulo valido", "Descripcion valida extensa",
+                        " ", Impacto.MEDIO, Urgencia.MEDIA));
+    }
+
+    @Test
+    void rechazaImpactoNulo() {
+        assertThrows(ReglaNegocioException.class,
+                () -> Incidencia.crear("Titulo valido", "Descripcion valida extensa",
+                        "Hardware", null, Urgencia.MEDIA));
+    }
+
+    @Test
+    void rechazaUrgenciaNula() {
+        assertThrows(ReglaNegocioException.class,
+                () -> Incidencia.crear("Titulo valido", "Descripcion valida extensa",
+                        "Hardware", Impacto.MEDIO, null));
+    }
+
+    @Test
+    void iniciaConFechasCoherentes() {
+        Incidencia incidencia = Incidencia.crear("Titulo valido", "Descripcion valida extensa",
+                "Redes", Impacto.MEDIO, Urgencia.MEDIA);
+
+        assertNotNull(incidencia.getFechaCreacion());
+        assertEquals(null, incidencia.getFechaCierre());
+    }
 }
