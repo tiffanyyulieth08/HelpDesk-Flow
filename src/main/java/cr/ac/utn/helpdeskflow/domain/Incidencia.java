@@ -14,6 +14,7 @@ public class Incidencia {
     private final String categoria;
     private final Impacto impacto;
     private final Urgencia urgencia;
+    private final LocalDateTime fechaCreacion;
     private ClaseServicio claseServicio;
     private EstadoIncidencia estado;
     private String solucionAplicada;
@@ -28,13 +29,15 @@ public class Incidencia {
         this.categoria = categoria;
         this.impacto = impacto;
         this.urgencia = urgencia;
+        this.fechaCreacion = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
         this.claseServicio = ClaseServicio.NORMAL;
         this.estado = EstadoIncidencia.REGISTRADA;
     }
 
     private Incidencia(UUID id, String titulo, String descripcion, String categoria,
                        Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
-                       String solucionAplicada, LocalDateTime fechaCierre,
+                       String solucionAplicada, LocalDateTime fechaCreacion,
+                       LocalDateTime fechaCierre,
                        ClaseServicio claseServicio) {
         validarTitulo(titulo);
         validarDescripcion(descripcion);
@@ -44,6 +47,7 @@ public class Incidencia {
         this.categoria = categoria;
         this.impacto = impacto;
         this.urgencia = urgencia;
+        this.fechaCreacion = fechaCreacion;
         this.claseServicio = claseServicio;
         this.estado = estado;
         this.solucionAplicada = solucionAplicada;
@@ -70,7 +74,7 @@ public class Incidencia {
                                         Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
                                         String solucionAplicada, LocalDateTime fechaCierre) {
         return new Incidencia(id, titulo, descripcion, categoria, impacto, urgencia,
-                              estado, solucionAplicada, fechaCierre, ClaseServicio.NORMAL);
+                              estado, solucionAplicada, null, fechaCierre, ClaseServicio.NORMAL);
     }
 
     public static Incidencia rehidratar(UUID id, String titulo, String descripcion, String categoria,
@@ -78,7 +82,15 @@ public class Incidencia {
                                         String solucionAplicada, LocalDateTime fechaCierre,
                                         ClaseServicio claseServicio) {
         return new Incidencia(id, titulo, descripcion, categoria, impacto, urgencia,
-                              estado, solucionAplicada, fechaCierre, claseServicio);
+                              estado, solucionAplicada, null, fechaCierre, claseServicio);
+    }
+
+    public static Incidencia rehidratar(UUID id, String titulo, String descripcion, String categoria,
+                                        Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
+                                        String solucionAplicada, LocalDateTime fechaCreacion,
+                                        LocalDateTime fechaCierre, ClaseServicio claseServicio) {
+        return new Incidencia(id, titulo, descripcion, categoria, impacto, urgencia,
+                              estado, solucionAplicada, fechaCreacion, fechaCierre, claseServicio);
     }
 
     public UUID getId() {
@@ -148,5 +160,9 @@ public class Incidencia {
 
     public LocalDateTime getFechaCierre() {
         return fechaCierre;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
     }
 }
