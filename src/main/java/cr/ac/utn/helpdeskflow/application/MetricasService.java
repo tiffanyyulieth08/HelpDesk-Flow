@@ -20,18 +20,15 @@ public class MetricasService {
 
     public MetricasResumen calcular() {
         List<Incidencia> incidencias = repository.buscarTodas();
-        EnumMap<Prioridad, Integer> cantidadPorPrioridad = new EnumMap<>(Prioridad.class);
-        for (Prioridad prioridad : Prioridad.values()) {
-            cantidadPorPrioridad.put(prioridad, 0);
-        }
+        EnumMap<Prioridad, Integer> cantidadPorPrioridad = crearConteosPorPrioridad();
 
         int abiertas = 0;
         int finalizadas = 0;
         Duration leadTimeTotal = Duration.ZERO;
 
         for (Incidencia incidencia : incidencias) {
-            cantidadPorPrioridad.compute(incidencia.getPrioridad(), (prioridad, cantidad) -> cantidad + 1);
-            if (incidencia.getEstado() == EstadoIncidencia.FINALIZADA) {
+            contarPorPrioridad(cantidadPorPrioridad, incidencia);
+            if (esFinalizada(incidencia)) {
                 finalizadas++;
                 leadTimeTotal = leadTimeTotal.plus(
                         Duration.between(incidencia.getFechaCreacion(), incidencia.getFechaCierre()));
@@ -40,11 +37,35 @@ public class MetricasService {
             }
         }
 
-        Duration leadTimePromedio = finalizadas == 0
-                ? Duration.ZERO
-                : leadTimeTotal.dividedBy(finalizadas);
-        Map<Prioridad, Integer> cantidades = Map.copyOf(cantidadPorPrioridad);
-        return new MetricasResumen(incidencias.size(), abiertas, finalizadas, finalizadas,
-                leadTimePromedio, cantidades);
+        return crearResumen(incidencias.size(), abiertas, finalizadas, leadTimeTotal,
+                cantidadPorPrioridad);
+    }
+
+    private EnumMap<Prioridad, Integer> crearConteosPorPrioridad() {
+        EnumMap<Prioridad, Integer> conteos = new EnumMap<>(Prioridad.class);
+        for (Prioridad prioridad : Prioridad.values()) {
+            conteos.put(prioridad, 0);
+        }
+        return conteos;
+    }
+
+    private void contarPorPrioridad(Map<Prioridad, Integer> conteos, Incidencia incidencia) {
+        conteos.compute(incidencia.getPrioridad(), (prioridad, cantidad) -> cantidad + 1);
+    }
+
+    private boolean esFinalizada(Incidencia incidencia) {
+        return incidencia.getEstado() == EstadoIncidencia.FINALIZADA;
+    }
+
+    private MetricasResumen crearResumen(int total, int abiertas, int finalizadas,
+                                         Duration leadTimeTotal,
+                                         Map<Prioridad, Integer> cantidadPorPrioridad) {
+        Duration leadTimePromedio = calcularLeadTimePromedio(leadTimeTotal, finalizadas);
+        return new MetricasResumen(total, abiertas, finalizadas, finalizadas,
+                leadTimePromedio, cantidadPorPrioridad);
+    }
+
+    private Duration calcularLeadTimePromedio(Duration leadTimeTotal, int finalizadas) {
+        return finalizadas == 0 ? Duration.ZERO : leadTimeTotal.dividedBy(finalizadas);
     }
 }
