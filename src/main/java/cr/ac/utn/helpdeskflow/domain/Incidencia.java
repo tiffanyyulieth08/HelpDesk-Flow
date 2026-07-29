@@ -1,6 +1,7 @@
 package cr.ac.utn.helpdeskflow.domain;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import cr.ac.utn.helpdeskflow.exception.ReglaNegocioException;
@@ -29,6 +30,22 @@ public class Incidencia {
         this.estado = EstadoIncidencia.REGISTRADA;
     }
 
+    private Incidencia(UUID id, String titulo, String descripcion, String categoria,
+                       Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
+                       String solucionAplicada, LocalDateTime fechaCierre) {
+        validarTitulo(titulo);
+        validarDescripcion(descripcion);
+        this.id = id;
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.categoria = categoria;
+        this.impacto = impacto;
+        this.urgencia = urgencia;
+        this.estado = estado;
+        this.solucionAplicada = solucionAplicada;
+        this.fechaCierre = fechaCierre;
+    }
+
     private static void validarTitulo(String titulo) {
         if (titulo == null || titulo.isBlank()) {
             throw new ReglaNegocioException("El titulo no puede ser nulo, vacio o solo espacios");
@@ -43,6 +60,13 @@ public class Incidencia {
 
     public static Incidencia crear(String titulo, String descripcion, String categoria, Impacto impacto, Urgencia urgencia) {
         return new Incidencia(titulo, descripcion, categoria, impacto, urgencia);
+    }
+
+    public static Incidencia rehidratar(UUID id, String titulo, String descripcion, String categoria,
+                                        Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
+                                        String solucionAplicada, LocalDateTime fechaCierre) {
+        return new Incidencia(id, titulo, descripcion, categoria, impacto, urgencia,
+                              estado, solucionAplicada, fechaCierre);
     }
 
     public UUID getId() {
@@ -83,7 +107,7 @@ public class Incidencia {
         }
         estado = nuevoEstado;
         if (estado == EstadoIncidencia.FINALIZADA) {
-            fechaCierre = LocalDateTime.now();
+            fechaCierre = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
         }
     }
 
