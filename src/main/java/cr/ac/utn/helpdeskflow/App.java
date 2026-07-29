@@ -45,10 +45,14 @@ public class App {
 
     public void ejecutar() {
         boolean continuar = true;
-        while (continuar && entrada.hasNextLine()) {
+        while (continuar) {
             mostrarMenu();
+            if (!entrada.hasNextLine()) {
+                break;
+            }
             String opcion = entrada.nextLine().trim();
             if (opcion.isBlank()) {
+                salida.println("Debe seleccionar una opcion.");
                 continue;
             }
             try {
@@ -166,73 +170,53 @@ public class App {
         salida.println("Solucion aplicada: " + incidencia.getSolucionAplicada());
     }
 
+    private String leerLinea(String mensaje) {
+        solicitar(mensaje);
+        if (!entrada.hasNextLine()) {
+            throw new ReglaNegocioException("Entrada finalizada inesperadamente");
+        }
+        return entrada.nextLine().trim();
+    }
+
     private String leerTextoObligatorio(String mensaje) {
-        while (entrada.hasNextLine()) {
-            solicitar(mensaje);
-            String valor = entrada.nextLine().trim();
+        while (true) {
+            String valor = leerLinea(mensaje);
             if (!valor.isBlank()) {
                 return valor;
             }
             salida.println("Este campo es obligatorio. Intente nuevamente.");
         }
-        return "";
     }
 
     private String leerTitulo() {
-        while (entrada.hasNextLine()) {
-            solicitar("Titulo: ");
-            String valor = entrada.nextLine().trim();
-            if (valor.isBlank()) {
-                salida.println("Este campo es obligatorio. Intente nuevamente.");
-            } else if (esOpcionDelMenu(valor)) {
-                salida.println("El titulo no puede ser una opcion del menu. "
-                        + "Escriba el titulo de la incidencia e intente nuevamente.");
-            } else {
-                return valor;
-            }
-        }
-        return "";
-    }
-
-    private boolean esOpcionDelMenu(String valor) {
-        try {
-            int opcion = Integer.parseInt(valor);
-            return opcion >= 0 && opcion <= 11;
-        } catch (NumberFormatException excepcion) {
-            return false;
-        }
+        return leerTextoObligatorio("Titulo: ");
     }
 
     private String leerDescripcion() {
-        while (entrada.hasNextLine()) {
-            solicitar("Descripcion: ");
-            String valor = entrada.nextLine().trim();
+        while (true) {
+            String valor = leerLinea("Descripcion: ");
             if (valor.length() >= 10) {
                 return valor;
             }
             salida.println("La descripcion debe contener al menos 10 caracteres. Intente nuevamente.");
         }
-        return "";
     }
 
     private UUID leerUuid() {
-        while (entrada.hasNextLine()) {
-            solicitar("Identificador (UUID): ");
-            String valor = entrada.nextLine().trim();
+        while (true) {
+            String valor = leerLinea("Identificador (UUID): ");
             try {
                 return UUID.fromString(valor);
             } catch (IllegalArgumentException excepcion) {
                 salida.println("Identificador invalido. Debe tener formato UUID. Intente nuevamente.");
             }
         }
-        throw new ReglaNegocioException("No se recibio un identificador");
     }
 
     private <T extends Enum<T>> T leerEnum(Class<T> tipo, String nombre) {
         String valoresPermitidos = String.join(", ", nombres(tipo));
-        while (entrada.hasNextLine()) {
-            solicitar("Ingrese " + nombre + " (" + valoresPermitidos + "): ");
-            String valor = entrada.nextLine().trim();
+        while (true) {
+            String valor = leerLinea("Ingrese " + nombre + " (" + valoresPermitidos + "): ");
             try {
                 return Enum.valueOf(tipo, valor.toUpperCase());
             } catch (IllegalArgumentException excepcion) {
@@ -240,7 +224,6 @@ public class App {
                         + valoresPermitidos + ". Intente nuevamente.");
             }
         }
-        throw new ReglaNegocioException("No se recibio un valor para " + nombre);
     }
 
     private <T extends Enum<T>> List<String> nombres(Class<T> tipo) {
