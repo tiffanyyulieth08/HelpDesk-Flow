@@ -39,6 +39,7 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
                 + "impacto VARCHAR(20) NOT NULL, "
                 + "urgencia VARCHAR(20) NOT NULL, "
                 + "estado VARCHAR(30) NOT NULL, "
+                + "clase_servicio VARCHAR(20) NOT NULL DEFAULT 'NORMAL', "
                 + "fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
                 + "fecha_cierre TIMESTAMP, "
                 + "solucion_aplicada VARCHAR(2000)"
@@ -46,6 +47,10 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
         try (Connection conn = obtenerConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.execute();
+            try (PreparedStatement migracion = conn.prepareStatement(
+                    "ALTER TABLE incidencias ADD COLUMN IF NOT EXISTS clase_servicio VARCHAR(20) NOT NULL DEFAULT 'NORMAL'")) {
+                migracion.execute();
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Error al crear la tabla incidencias", e);
         }
@@ -79,8 +84,8 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
     }
 
     private void insertar(Incidencia incidencia) {
-        String sql = "INSERT INTO incidencias (id, titulo, descripcion, categoria, impacto, urgencia, estado, fecha_cierre, solucion_aplicada) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO incidencias (id, titulo, descripcion, categoria, impacto, urgencia, estado, clase_servicio, fecha_cierre, solucion_aplicada) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = obtenerConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, incidencia.getId().toString());
@@ -90,8 +95,9 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
             stmt.setString(5, incidencia.getImpacto().name());
             stmt.setString(6, incidencia.getUrgencia().name());
             stmt.setString(7, incidencia.getEstado().name());
-            setNullableTimestamp(stmt, 8, incidencia.getFechaCierre());
-            stmt.setString(9, incidencia.getSolucionAplicada());
+            stmt.setString(8, incidencia.getClaseServicio().name());
+            setNullableTimestamp(stmt, 9, incidencia.getFechaCierre());
+            stmt.setString(10, incidencia.getSolucionAplicada());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error al insertar incidencia", e);
@@ -100,7 +106,7 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
 
     private void actualizar(Incidencia incidencia) {
         String sql = "UPDATE incidencias SET titulo = ?, descripcion = ?, categoria = ?, impacto = ?, "
-                + "urgencia = ?, estado = ?, fecha_cierre = ?, solucion_aplicada = ? WHERE id = ?";
+                + "urgencia = ?, estado = ?, clase_servicio = ?, fecha_cierre = ?, solucion_aplicada = ? WHERE id = ?";
         try (Connection conn = obtenerConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, incidencia.getTitulo());
@@ -109,9 +115,10 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
             stmt.setString(4, incidencia.getImpacto().name());
             stmt.setString(5, incidencia.getUrgencia().name());
             stmt.setString(6, incidencia.getEstado().name());
-            setNullableTimestamp(stmt, 7, incidencia.getFechaCierre());
-            stmt.setString(8, incidencia.getSolucionAplicada());
-            stmt.setString(9, incidencia.getId().toString());
+            stmt.setString(7, incidencia.getClaseServicio().name());
+            setNullableTimestamp(stmt, 8, incidencia.getFechaCierre());
+            stmt.setString(9, incidencia.getSolucionAplicada());
+            stmt.setString(10, incidencia.getId().toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error al actualizar incidencia", e);

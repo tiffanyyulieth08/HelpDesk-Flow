@@ -24,5 +24,17 @@ Las pruebas utilizan bases temporales independientes y no modifican la base loca
 
 Para verificar:
 
-```bash
-mvn clean verify
+`mvn clean verify`
+
+## Política EXPEDITE
+
+Una incidencia con prioridad CRITICA puede marcarse con clase de servicio
+EXPEDITE.
+
+Solo puede existir una incidencia EXPEDITE simultáneamente en los estados:
+
+- EN_DESARROLLO
+- EN_VALIDACION
+
+Pueden existir varias incidencias EXPEDITE en REGISTRADA o LISTA. Cuando la
+incidencia activa finaliza, otra puede entrar en desarrollo.
