@@ -1,59 +1,43 @@
-# Refactorización de HelpDesk Flow
-
-## Tarjeta
-
-KAN-10 — Realizar refactorización
-
-## Participantes
-
-- Tiffany
-- Seidy
-
-## Modalidad de trabajo
-
-Ping-Pong con alternancia de Driver y Navigator.
-
 ## Estado anterior
 
 ### Problema identificado
 
-Describir el problema concreto encontrado durante la auditoría.
+La entidad `Incidencia` contiene dentro de `cambiarEstado()` tanto las reglas de
+validación como la modificación efectiva del estado y el registro de la fecha
+de cierre.
 
-### Evidencia en el código
+Además, `IncidenciaConsultaService` conoce directamente que la prioridad se
+calcula mediante impacto y urgencia, aunque la entidad ya ofrece
+`getPrioridad()`.
 
-- Clase:
-- Método:
-- Responsabilidades mezcladas:
-- Duplicación o dificultad:
-- Consecuencia para el mantenimiento:
+### Evidencia
+
+- `Incidencia.cambiarEstado()` valida la secuencia, exige una solución,
+  modifica el estado y genera la fecha de cierre.
+- No existe una clase `ValidadorTransicion`.
+- `IncidenciaConsultaService.filtrarPorPrioridad()` llama directamente a
+  `CalculadoraPrioridad`.
+
+### Consecuencia
+
+- La entidad concentra validación y mutación.
+- La forma de obtener la prioridad está conocida por más de un componente.
+- Las responsabilidades son menos claras.
+- Cambiar una regla de transición obliga a modificar directamente la entidad.
 
 ### Comportamiento que debe preservarse
 
-- Registro de incidencias.
-- Cálculo de prioridad.
-- Transiciones de estado.
-- Regla de solución obligatoria.
-- Política EXPEDITE.
-- Consultas y filtros.
-- Persistencia H2.
-- Métricas.
+- No se permiten saltos de estado.
+- No se permiten retrocesos.
+- Solo se puede finalizar con una solución.
+- La fecha de cierre se asigna al finalizar.
+- La regla EXPEDITE continúa funcionando.
+- Los filtros por prioridad producen los mismos resultados.
 
-### Pruebas protectoras
-
-Indicar los nombres reales de las clases de prueba.
-
-### Resultado antes de refactorizar
+### Línea base
 
 - Comando: `mvn clean verify`
-- Pruebas ejecutadas:
+- Pruebas: 64
 - Fallos: 0
 - Errores: 0
 - Resultado: `BUILD SUCCESS`
-
-## Cambio realizado
-
-Pendiente.
-
-## Resultado obtenido
-
-Pendiente.

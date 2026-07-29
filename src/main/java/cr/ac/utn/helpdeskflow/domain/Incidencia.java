@@ -137,13 +137,7 @@ public class Incidencia {
     }
 
     public void cambiarEstado(EstadoIncidencia nuevoEstado) {
-        if (nuevoEstado == null || nuevoEstado.ordinal() != estado.ordinal() + 1) {
-            throw new ReglaNegocioException("Solo se permite avanzar al estado siguiente");
-        }
-        if (nuevoEstado == EstadoIncidencia.FINALIZADA
-                && (solucionAplicada == null || solucionAplicada.isBlank())) {
-            throw new ReglaNegocioException("No se puede finalizar sin una solucion registrada");
-        }
+        ValidadorTransicion.validar(estado, nuevoEstado, solucionAplicada);
         estado = nuevoEstado;
         if (estado == EstadoIncidencia.FINALIZADA) {
             fechaCierre = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
