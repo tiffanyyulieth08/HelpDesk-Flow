@@ -96,7 +96,7 @@ tests/               pruebas unitarias, funcionales y de persistencia
 
 ## Kanban e integración continua
 
-Tablero: **[PENDIENTE: agregar enlace al tablero Kanban]**
+Tablero: [https://github.com/users/tiffanyyulieth08/projects/1]
 
 El workflow `.github/workflows/ci.yml` ejecuta `mvn -B clean verify` en push a
 `develop` y `feature/**`, y en pull requests dirigidos a `develop` o `main`.
