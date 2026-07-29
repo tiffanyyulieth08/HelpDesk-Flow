@@ -28,4 +28,26 @@ public class IncidenciaWorkflowService {
             repository.guardar(incidencia);
         });
     }
+
+    public void registrarSolucion(UUID id, String solucion) {
+        repository.ejecutarAtomico(() -> {
+            Incidencia incidencia = obtenerIncidencia(id);
+            incidencia.registrarSolucion(solucion);
+            repository.guardar(incidencia);
+        });
+    }
+
+    public void marcarComoExpedite(UUID id) {
+        repository.ejecutarAtomico(() -> {
+            Incidencia incidencia = obtenerIncidencia(id);
+            incidencia.marcarComoExpedite();
+            repository.guardar(incidencia);
+        });
+    }
+
+    private Incidencia obtenerIncidencia(UUID id) {
+        return repository.buscarPorId(id)
+                .orElseThrow(() -> new ReglaNegocioException(
+                        "No existe una incidencia con el identificador indicado"));
+    }
 }
