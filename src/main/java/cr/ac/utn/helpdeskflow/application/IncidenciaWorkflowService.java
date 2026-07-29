@@ -7,6 +7,7 @@ import cr.ac.utn.helpdeskflow.domain.Incidencia;
 import cr.ac.utn.helpdeskflow.exception.ReglaNegocioException;
 import cr.ac.utn.helpdeskflow.repository.IncidenciaRepository;
 
+/** Coordina las operaciones que modifican el estado de una incidencia. */
 public class IncidenciaWorkflowService {
 
     private final IncidenciaRepository repository;
@@ -17,6 +18,7 @@ public class IncidenciaWorkflowService {
         this.expeditePolicy = new ExpeditePolicy(repository);
     }
 
+    /** Cambia el estado aplicando las reglas de transición y de exclusividad EXPEDITE. */
     public void cambiarEstado(UUID id, EstadoIncidencia nuevoEstado) {
         repository.ejecutarAtomico(() -> {
             Incidencia incidencia = repository.buscarPorId(id)
@@ -29,6 +31,7 @@ public class IncidenciaWorkflowService {
         });
     }
 
+    /** Registra o reemplaza la solución asociada a una incidencia. */
     public void registrarSolucion(UUID id, String solucion) {
         repository.ejecutarAtomico(() -> {
             Incidencia incidencia = obtenerIncidencia(id);
@@ -37,6 +40,7 @@ public class IncidenciaWorkflowService {
         });
     }
 
+    /** Marca como EXPEDITE una incidencia con prioridad CRITICA. */
     public void marcarComoExpedite(UUID id) {
         repository.ejecutarAtomico(() -> {
             Incidencia incidencia = obtenerIncidencia(id);

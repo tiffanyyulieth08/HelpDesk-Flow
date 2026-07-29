@@ -9,6 +9,7 @@ import java.util.UUID;
 import cr.ac.utn.helpdeskflow.domain.Incidencia;
 import cr.ac.utn.helpdeskflow.repository.IncidenciaRepository;
 
+/** Repositorio en memoria útil para pruebas y ejecuciones aisladas. */
 public class InMemoryIncidenciaRepository implements IncidenciaRepository {
 
     private final Map<UUID, Incidencia> incidencias = new LinkedHashMap<>();
