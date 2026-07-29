@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import cr.ac.utn.helpdeskflow.domain.CalculadoraPrioridad;
 import cr.ac.utn.helpdeskflow.domain.EstadoIncidencia;
 import cr.ac.utn.helpdeskflow.domain.Incidencia;
 import cr.ac.utn.helpdeskflow.domain.Prioridad;
@@ -33,9 +32,7 @@ public class IncidenciaConsultaService {
     }
 
     public List<Incidencia> filtrarPorPrioridad(Prioridad prioridad) {
-        return filtrar(incidencia -> CalculadoraPrioridad.calcular(
-                incidencia.getImpacto(),
-                incidencia.getUrgencia()) == prioridad);
+        return filtrar(incidencia -> incidencia.getPrioridad() == prioridad);
     }
 
     public List<Incidencia> listarAbiertas() {
