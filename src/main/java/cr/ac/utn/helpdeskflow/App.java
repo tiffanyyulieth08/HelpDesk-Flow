@@ -19,8 +19,10 @@ import cr.ac.utn.helpdeskflow.exception.ReglaNegocioException;
 import cr.ac.utn.helpdeskflow.infrastructure.H2IncidenciaRepository;
 import cr.ac.utn.helpdeskflow.repository.IncidenciaRepository;
 
+/** Punto de entrada y adaptador de consola para HelpDesk Flow. */
 public class App {
 
+    /** Inicia la aplicación usando el repositorio H2 configurado por defecto. */
     public static void main(String[] args) {
         IncidenciaRepository repository = new H2IncidenciaRepository(
                 "jdbc:h2:file:./data/helpdesk-flow", "sa", "");
@@ -34,6 +36,7 @@ public class App {
     private final IncidenciaWorkflowService workflow;
     private final MetricasService metricas;
 
+    /** Construye la aplicación con dependencias inyectables para facilitar las pruebas. */
     public App(Scanner entrada, PrintStream salida, IncidenciaRepository repository) {
         this.entrada = entrada;
         this.salida = salida;
@@ -43,6 +46,7 @@ public class App {
         this.metricas = new MetricasService(repository);
     }
 
+    /** Ejecuta el menú interactivo hasta recibir la opción de salida. */
     public void ejecutar() {
         boolean continuar = true;
         while (continuar) {

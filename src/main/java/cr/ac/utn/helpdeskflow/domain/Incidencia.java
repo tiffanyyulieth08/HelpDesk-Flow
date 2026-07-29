@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import cr.ac.utn.helpdeskflow.exception.ReglaNegocioException;
 
+/** Representa una incidencia y controla sus reglas de negocio principales. */
 public class Incidencia {
 
     private final UUID id;
@@ -83,10 +84,12 @@ public class Incidencia {
         }
     }
 
+    /** Crea una incidencia nueva en estado {@link EstadoIncidencia#REGISTRADA}. */
     public static Incidencia crear(String titulo, String descripcion, String categoria, Impacto impacto, Urgencia urgencia) {
         return new Incidencia(titulo, descripcion, categoria, impacto, urgencia);
     }
 
+    /** Rehidrata una incidencia antigua usando valores compatibles con el modelo inicial. */
     public static Incidencia rehidratar(UUID id, String titulo, String descripcion, String categoria,
                                         Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
                                         String solucionAplicada, LocalDateTime fechaCierre) {
@@ -95,6 +98,7 @@ public class Incidencia {
                               fechaCierre, ClaseServicio.NORMAL);
     }
 
+    /** Rehidrata una incidencia persistida sin fecha de creación explícita. */
     public static Incidencia rehidratar(UUID id, String titulo, String descripcion, String categoria,
                                         Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
                                         String solucionAplicada, LocalDateTime fechaCierre,
@@ -104,6 +108,7 @@ public class Incidencia {
                               fechaCierre, claseServicio);
     }
 
+    /** Rehidrata una incidencia con todos sus datos persistidos. */
     public static Incidencia rehidratar(UUID id, String titulo, String descripcion, String categoria,
                                         Impacto impacto, Urgencia urgencia, EstadoIncidencia estado,
                                         String solucionAplicada, LocalDateTime fechaCreacion,
@@ -112,38 +117,47 @@ public class Incidencia {
                               estado, solucionAplicada, fechaCreacion, fechaCierre, claseServicio);
     }
 
+    /** Devuelve el identificador único de la incidencia. */
     public UUID getId() {
         return id;
     }
 
+    /** Devuelve el título de la incidencia. */
     public String getTitulo() {
         return titulo;
     }
 
+    /** Devuelve la descripción reportada. */
     public String getDescripcion() {
         return descripcion;
     }
 
+    /** Devuelve la categoría funcional. */
     public String getCategoria() {
         return categoria;
     }
 
+    /** Devuelve el impacto asignado. */
     public Impacto getImpacto() {
         return impacto;
     }
 
+    /** Devuelve la urgencia asignada. */
     public Urgencia getUrgencia() {
         return urgencia;
     }
 
+    /** Calcula la prioridad a partir del impacto y la urgencia actuales. */
     public Prioridad getPrioridad() {
         return CalculadoraPrioridad.calcular(impacto, urgencia);
     }
 
+    /** Devuelve la clase de servicio vigente. */
     public ClaseServicio getClaseServicio() {
         return claseServicio;
     }
 
+    /** Marca la incidencia como EXPEDITE si su prioridad es crítica. */
     public void marcarComoExpedite() {
         if (getPrioridad() != Prioridad.CRITICA) {
             throw new ReglaNegocioException("Solo las incidencias criticas pueden ser EXPEDITE");
@@ -151,10 +165,12 @@ public class Incidencia {
         claseServicio = ClaseServicio.EXPEDITE;
     }
 
+    /** Devuelve el estado actual del flujo. */
     public EstadoIncidencia getEstado() {
         return estado;
     }
 
+    /** Avanza la incidencia al siguiente estado permitido del flujo. */
     public void cambiarEstado(EstadoIncidencia nuevoEstado) {
         ValidadorTransicion.validar(estado, nuevoEstado, solucionAplicada);
         estado = nuevoEstado;
@@ -163,18 +179,22 @@ public class Incidencia {
         }
     }
 
+    /** Registra la solución que permitirá finalizar la incidencia. */
     public void registrarSolucion(String solucion) {
         solucionAplicada = solucion;
     }
 
+    /** Devuelve la solución registrada, si existe. */
     public String getSolucionAplicada() {
         return solucionAplicada;
     }
 
+    /** Devuelve la fecha de cierre o {@code null} si sigue abierta. */
     public LocalDateTime getFechaCierre() {
         return fechaCierre;
     }
 
+    /** Devuelve la fecha de creación. */
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
     }

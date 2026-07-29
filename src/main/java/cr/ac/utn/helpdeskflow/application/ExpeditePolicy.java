@@ -6,6 +6,7 @@ import cr.ac.utn.helpdeskflow.domain.Incidencia;
 import cr.ac.utn.helpdeskflow.exception.ReglaNegocioException;
 import cr.ac.utn.helpdeskflow.repository.IncidenciaRepository;
 
+/** Aplica la regla de exclusividad para incidencias EXPEDITE activas. */
 public class ExpeditePolicy {
 
     private final IncidenciaRepository repository;
@@ -14,6 +15,11 @@ public class ExpeditePolicy {
         this.repository = repository;
     }
 
+    /**
+     * Verifica que no haya otra incidencia EXPEDITE en desarrollo o validación.
+     *
+     * @throws ReglaNegocioException si ya existe otra EXPEDITE activa
+     */
     public void validarTransicion(Incidencia incidencia, EstadoIncidencia nuevoEstado) {
         if (!esExpedite(incidencia) || !esEstadoActivo(nuevoEstado)) {
             return;

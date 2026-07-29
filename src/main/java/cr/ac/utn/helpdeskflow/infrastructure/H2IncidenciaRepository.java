@@ -18,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import cr.ac.utn.helpdeskflow.domain.Incidencia;
 import cr.ac.utn.helpdeskflow.repository.IncidenciaRepository;
 
+/** Implementación JDBC que persiste incidencias en una base de datos H2. */
 public class H2IncidenciaRepository implements IncidenciaRepository {
 
     private static final ConcurrentHashMap<String, ReentrantLock> BLOQUEOS = new ConcurrentHashMap<>();
@@ -27,6 +28,7 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
     private final String password;
     private final IncidenciaJdbcMapper mapper = new IncidenciaJdbcMapper();
 
+    /** Crea el repositorio y asegura que el esquema requerido exista. */
     public H2IncidenciaRepository(String jdbcUrl, String username, String password) {
         this.jdbcUrl = jdbcUrl;
         this.username = username;
@@ -70,6 +72,7 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
         return DriverManager.getConnection(jdbcUrl, username, password);
     }
 
+    /** Guarda una incidencia nueva o actualiza sus datos persistidos. */
     @Override
     public void guardar(Incidencia incidencia) {
         if (existe(incidencia.getId())) {
@@ -137,6 +140,7 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
         }
     }
 
+    /** Busca una incidencia por UUID. */
     @Override
     public Optional<Incidencia> buscarPorId(UUID id) {
         String sql = "SELECT " + IncidenciaJdbcMapper.SELECT_COLUMNAS + " FROM incidencias WHERE id = ?";
@@ -154,6 +158,7 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
         }
     }
 
+    /** Lista las incidencias conservando el orden de registro. */
     @Override
     public List<Incidencia> buscarTodas() {
         String sql = "SELECT " + IncidenciaJdbcMapper.SELECT_COLUMNAS
@@ -171,6 +176,7 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
         }
     }
 
+    /** Ejecuta la operación protegiéndola con un bloqueo por conexión. */
     @Override
     public void ejecutarAtomico(Runnable operacion) {
         ReentrantLock bloqueo = BLOQUEOS.computeIfAbsent(jdbcUrl, clave -> new ReentrantLock());

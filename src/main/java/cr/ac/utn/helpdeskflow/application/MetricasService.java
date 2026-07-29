@@ -10,6 +10,7 @@ import cr.ac.utn.helpdeskflow.domain.Incidencia;
 import cr.ac.utn.helpdeskflow.domain.Prioridad;
 import cr.ac.utn.helpdeskflow.repository.IncidenciaRepository;
 
+/** Calcula indicadores operativos a partir de las incidencias persistidas. */
 public class MetricasService {
 
     private final IncidenciaRepository repository;
@@ -18,6 +19,7 @@ public class MetricasService {
         this.repository = repository;
     }
 
+    /** Calcula el resumen actual de volumen, estados, throughput y lead time. */
     public MetricasResumen calcular() {
         List<Incidencia> incidencias = repository.buscarTodas();
         EnumMap<Prioridad, Integer> cantidadPorPrioridad = crearConteosPorPrioridad();
