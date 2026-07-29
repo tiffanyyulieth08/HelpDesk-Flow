@@ -121,7 +121,7 @@ La decisión fue verificada mediante `ExpediteWorkflowTest` y
 
 ## Interacción — Registro de incidencias
 
-- Fecha: PEGAR-FECHA-REAL
+
 - Herramienta: Codex
 - Responsable: Tiffany
 
@@ -150,7 +150,7 @@ reales del proyecto y mantuvo separados los commits RED, GREEN y REFACTOR.
 
 ## Interacción — Consultas y filtros
 
-- Fecha: PEGAR-FECHA-REAL
+
 - Herramienta: Codex
 - Responsable: Tiffany
 
@@ -180,7 +180,7 @@ la prioridad.
 
 ## Interacción — Persistencia H2
 
-- Fecha: PEGAR-FECHA-REAL
+
 - Herramienta: Codex
 - Responsable: Tiffany
 
@@ -208,3 +208,4 @@ Se verificó mediante:
 La pareja adaptó el esquema a los campos reales, agregó soporte para
 `ClaseServicio`, utilizó `@TempDir` en pruebas y excluyó los archivos locales H2
 mediante `.gitignore`.
+
