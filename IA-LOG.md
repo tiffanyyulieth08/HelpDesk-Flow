@@ -118,3 +118,93 @@ La decisión humana fue mantener:
 
 La decisión fue verificada mediante `ExpediteWorkflowTest` y
 `mvn clean verify`.
+
+## Interacción — Registro de incidencias
+
+- Fecha: PEGAR-FECHA-REAL
+- Herramienta: Codex
+- Responsable: Tiffany
+
+### Objetivo
+
+Solicitar apoyo para crear las pruebas de registro de incidencias siguiendo TDD.
+
+### Resultado obtenido
+
+La herramienta propuso pruebas para UUID, título, descripción, categoría,
+impacto y urgencia.
+
+### Verificación
+
+Se verificó mediante:
+
+- `IncidenciaTest`
+- ejecución RED antes de implementar;
+- ejecución GREEN después de implementar;
+- `mvn clean verify`.
+
+### Cambios humanos
+
+La pareja adaptó los constructores, nombres y validaciones a las convenciones
+reales del proyecto y mantuvo separados los commits RED, GREEN y REFACTOR.
+
+## Interacción — Consultas y filtros
+
+- Fecha: PEGAR-FECHA-REAL
+- Herramienta: Codex
+- Responsable: Tiffany
+
+### Objetivo
+
+Diseñar las pruebas y la implementación para listar, buscar y filtrar
+incidencias.
+
+### Resultado obtenido
+
+Se propuso un servicio de consultas y un repositorio en memoria con filtros por
+estado, prioridad, abiertas y finalizadas.
+
+### Verificación
+
+Se verificó mediante:
+
+- `IncidenciaConsultaServiceTest`
+- `ConsultaIncidenciasFuncionalTest`
+- `mvn clean verify`.
+
+### Cambios humanos
+
+Se modificó la propuesta para que el filtro consultara
+`incidencia.getPrioridad()` y no volviera a conocer directamente cómo se calcula
+la prioridad.
+
+## Interacción — Persistencia H2
+
+- Fecha: PEGAR-FECHA-REAL
+- Herramienta: Codex
+- Responsable: Tiffany
+
+### Objetivo
+
+Diseñar pruebas de integración y una implementación JDBC para conservar
+incidencias en H2.
+
+### Resultado obtenido
+
+La herramienta propuso `H2IncidenciaRepository`, creación automática del
+esquema, consultas preparadas y una base temporal para pruebas.
+
+### Verificación
+
+Se verificó mediante:
+
+- `H2IncidenciaRepositoryTest`
+- `H2ExpeditePersistenceTest`
+- prueba de recreación del repositorio;
+- `mvn clean verify`.
+
+### Cambios humanos
+
+La pareja adaptó el esquema a los campos reales, agregó soporte para
+`ClaseServicio`, utilizó `@TempDir` en pruebas y excluyó los archivos locales H2
+mediante `.gitignore`.
