@@ -13,4 +13,10 @@ public interface IncidenciaRepository {
     List<Incidencia> buscarTodas();
 
     Optional<Incidencia> buscarPorId(UUID id);
+
+    default void ejecutarAtomico(Runnable operacion) {
+        synchronized (this) {
+            operacion.run();
+        }
+    }
 }
