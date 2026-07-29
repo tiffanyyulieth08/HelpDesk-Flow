@@ -13,10 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import cr.ac.utn.helpdeskflow.domain.EstadoIncidencia;
-import cr.ac.utn.helpdeskflow.domain.Impacto;
 import cr.ac.utn.helpdeskflow.domain.Incidencia;
-import cr.ac.utn.helpdeskflow.domain.Urgencia;
 import cr.ac.utn.helpdeskflow.repository.IncidenciaRepository;
 
 public class H2IncidenciaRepository implements IncidenciaRepository {
@@ -24,6 +21,7 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
     private final String jdbcUrl;
     private final String username;
     private final String password;
+    private final IncidenciaJdbcMapper mapper = new IncidenciaJdbcMapper();
 
     public H2IncidenciaRepository(String jdbcUrl, String username, String password) {
         this.jdbcUrl = jdbcUrl;
@@ -122,14 +120,13 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
 
     @Override
     public Optional<Incidencia> buscarPorId(UUID id) {
-        String sql = "SELECT id, titulo, descripcion, categoria, impacto, urgencia, estado, "
-                + "fecha_cierre, solucion_aplicada FROM incidencias WHERE id = ?";
+        String sql = "SELECT " + IncidenciaJdbcMapper.SELECT_COLUMNAS + " FROM incidencias WHERE id = ?";
         try (Connection conn = obtenerConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, id.toString());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(mapearIncidencia(rs));
+                    return Optional.of(mapper.mapear(rs));
                 }
             }
             return Optional.empty();
@@ -140,33 +137,18 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
 
     @Override
     public List<Incidencia> buscarTodas() {
-        String sql = "SELECT id, titulo, descripcion, categoria, impacto, urgencia, estado, "
-                + "fecha_cierre, solucion_aplicada FROM incidencias ORDER BY fecha_creacion, id";
+        String sql = "SELECT " + IncidenciaJdbcMapper.SELECT_COLUMNAS + " FROM incidencias ORDER BY fecha_creacion, id";
         try (Connection conn = obtenerConexion();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             List<Incidencia> resultado = new ArrayList<>();
             while (rs.next()) {
-                resultado.add(mapearIncidencia(rs));
+                resultado.add(mapper.mapear(rs));
             }
             return Collections.unmodifiableList(resultado);
         } catch (SQLException e) {
             throw new RuntimeException("Error al listar incidencias", e);
         }
-    }
-
-    private Incidencia mapearIncidencia(ResultSet rs) throws SQLException {
-        UUID id = UUID.fromString(rs.getString("id"));
-        String titulo = rs.getString("titulo");
-        String descripcion = rs.getString("descripcion");
-        String categoria = rs.getString("categoria");
-        Impacto impacto = Impacto.valueOf(rs.getString("impacto"));
-        Urgencia urgencia = Urgencia.valueOf(rs.getString("urgencia"));
-        EstadoIncidencia estado = EstadoIncidencia.valueOf(rs.getString("estado"));
-        LocalDateTime fechaCierre = obtenerNullableTimestamp(rs, "fecha_cierre");
-        String solucionAplicada = rs.getString("solucion_aplicada");
-        return Incidencia.rehidratar(id, titulo, descripcion, categoria, impacto, urgencia,
-                estado, solucionAplicada, fechaCierre);
     }
 
     private void setNullableTimestamp(PreparedStatement stmt, int index, LocalDateTime value) throws SQLException {
@@ -175,10 +157,5 @@ public class H2IncidenciaRepository implements IncidenciaRepository {
         } else {
             stmt.setNull(index, java.sql.Types.TIMESTAMP);
         }
-    }
-
-    private LocalDateTime obtenerNullableTimestamp(ResultSet rs, String column) throws SQLException {
-        Timestamp ts = rs.getTimestamp(column);
-        return ts != null ? ts.toLocalDateTime() : null;
     }
 }
