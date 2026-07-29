@@ -38,3 +38,20 @@ Solo puede existir una incidencia EXPEDITE simultáneamente en los estados:
 
 Pueden existir varias incidencias EXPEDITE en REGISTRADA o LISTA. Cuando la
 incidencia activa finaliza, otra puede entrar en desarrollo.
+
+## Métricas
+
+HelpDesk Flow calcula las siguientes métricas:
+
+- Total de incidencias.
+- Incidencias abiertas.
+- Incidencias finalizadas.
+- Throughput.
+- Lead time promedio de incidencias finalizadas.
+- Cantidad de incidencias por prioridad.
+
+Una incidencia se considera abierta cuando su estado es diferente de
+`FINALIZADA`.
+
+El lead time se calcula entre la fecha de creación y la fecha de cierre. Las
+incidencias abiertas no participan en ese promedio.
