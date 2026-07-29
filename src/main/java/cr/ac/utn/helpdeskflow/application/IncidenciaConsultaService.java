@@ -2,6 +2,7 @@ package cr.ac.utn.helpdeskflow.application;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import cr.ac.utn.helpdeskflow.domain.CalculadoraPrioridad;
 import cr.ac.utn.helpdeskflow.domain.EstadoIncidencia;
@@ -28,26 +29,30 @@ public class IncidenciaConsultaService {
     }
 
     public List<Incidencia> filtrarPorEstado(EstadoIncidencia estado) {
-        return repository.buscarTodas().stream()
-                .filter(incidencia -> incidencia.getEstado() == estado)
-                .toList();
+        return filtrar(incidencia -> incidencia.getEstado() == estado);
     }
 
     public List<Incidencia> filtrarPorPrioridad(Prioridad prioridad) {
-        return repository.buscarTodas().stream()
-                .filter(incidencia -> CalculadoraPrioridad.calcular(
-                        incidencia.getImpacto(),
-                        incidencia.getUrgencia()) == prioridad)
-                .toList();
+        return filtrar(incidencia -> CalculadoraPrioridad.calcular(
+                incidencia.getImpacto(),
+                incidencia.getUrgencia()) == prioridad);
     }
 
     public List<Incidencia> listarAbiertas() {
-        return repository.buscarTodas().stream()
-                .filter(incidencia -> incidencia.getEstado() != EstadoIncidencia.FINALIZADA)
-                .toList();
+        return filtrar(IncidenciaConsultaService::esAbierta);
     }
 
     public List<Incidencia> listarFinalizadas() {
         return filtrarPorEstado(EstadoIncidencia.FINALIZADA);
+    }
+
+    private List<Incidencia> filtrar(Predicate<Incidencia> criterio) {
+        return repository.buscarTodas().stream()
+                .filter(criterio)
+                .toList();
+    }
+
+    private static boolean esAbierta(Incidencia incidencia) {
+        return incidencia.getEstado() != EstadoIncidencia.FINALIZADA;
     }
 }
