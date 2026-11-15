@@ -1,5 +1,11 @@
 # HelpDesk Flow
 
+<!-- local-development:start -->
+## Desarrollo local
+
+Consulta [RUNNING.md](RUNNING.md) para ubicar cada componente, abrirlo en su IDE, compilarlo y conocer las comprobaciones realizadas y los requisitos pendientes.
+<!-- local-development:end -->
+
 HelpDesk Flow es una aplicación de consola para registrar, priorizar, consultar y
 dar seguimiento a incidencias de soporte. Fue desarrollada por **Tiffany y
 Seidy** aplicando Java 17, Maven, JUnit 5, H2, TDD, arquitectura por capas,
