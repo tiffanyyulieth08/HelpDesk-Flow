@@ -1,5 +1,11 @@
 # HelpDesk Flow
 
+<!-- local-development:start -->
+## Desarrollo local
+
+Consulta [RUNNING.md](RUNNING.md) para ubicar cada componente, abrirlo en su IDE, compilarlo y conocer las comprobaciones realizadas y los requisitos pendientes.
+<!-- local-development:end -->
+
 HelpDesk Flow es una aplicación de consola para registrar, priorizar, consultar y
 dar seguimiento a incidencias de soporte. Fue desarrollada por **Tiffany y
 Seidy** aplicando Java 17, Maven, JUnit 5, H2, TDD, arquitectura por capas,
@@ -106,3 +112,25 @@ verificación local final se reproduce con:
 ```bash
 mvn clean verify
 ```
+
+<!-- build-repairs-20261115:start -->
+## Reparación y comprobación — 2026-11-15
+
+- Se documentaron los comandos de compilación y comprobación con Maven/JDK 24 y se conservaron los cambios previos de README y exclusiones.
+
+Comprobado:
+
+- Maven package terminó correctamente para `pom.xml`.
+- Maven: [INFO] Tests run: 86, Failures: 0, Errors: 0, Skipped: 0
+
+Comandos:
+
+```powershell
+mvn -f "pom.xml" package
+```
+
+Alcance pendiente:
+
+- Compilar y ejecutar la suite disponible no demuestra todos los flujos gráficos, de datos o de instalación.
+
+<!-- build-repairs-20261115:end -->
